@@ -19,11 +19,13 @@ namespace ViperClient
         private Panel panel1;
         private Button btnConnect;
         private Label lblLastConnected;
-        private Label lblConfigHash;
         private Panel panel2;
         private WebBrowser webBox;
         private ListBox lbSelectProvider;
         private Button button2;
+        private LinkLabel lnkChecksum;
+        private ToolTip tipChecksum;
+        private System.ComponentModel.IContainer components;
         private ContextMenu menu;
 
         public void OnConnect(object sender, EventArgs e)
@@ -118,17 +120,19 @@ namespace ViperClient
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lbSelectProvider = new System.Windows.Forms.ListBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.panelSelectTunnel = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lnkChecksum = new System.Windows.Forms.LinkLabel();
             this.btnConnect = new System.Windows.Forms.Button();
             this.lblLastConnected = new System.Windows.Forms.Label();
-            this.lblConfigHash = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.webBox = new System.Windows.Forms.WebBrowser();
+            this.tipChecksum = new System.Windows.Forms.ToolTip(this.components);
             this.panelSelectTunnel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -189,14 +193,25 @@ namespace ViperClient
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lnkChecksum);
             this.panel1.Controls.Add(this.btnConnect);
             this.panel1.Controls.Add(this.lblLastConnected);
-            this.panel1.Controls.Add(this.lblConfigHash);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 74);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(306, 75);
+            this.panel1.Size = new System.Drawing.Size(306, 57);
             this.panel1.TabIndex = 4;
+            // 
+            // lnkChecksum
+            // 
+            this.lnkChecksum.AutoSize = true;
+            this.lnkChecksum.Location = new System.Drawing.Point(12, 10);
+            this.lnkChecksum.Name = "lnkChecksum";
+            this.lnkChecksum.Size = new System.Drawing.Size(56, 13);
+            this.lnkChecksum.TabIndex = 3;
+            this.lnkChecksum.TabStop = true;
+            this.lnkChecksum.Text = "checksum";
+            this.lnkChecksum.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lnkChecksum_MouseClick);
             // 
             // btnConnect
             // 
@@ -206,34 +221,25 @@ namespace ViperClient
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "&Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // lblLastConnected
             // 
             this.lblLastConnected.AutoSize = true;
             this.lblLastConnected.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLastConnected.Location = new System.Drawing.Point(9, 36);
+            this.lblLastConnected.Location = new System.Drawing.Point(13, 35);
             this.lblLastConnected.Name = "lblLastConnected";
             this.lblLastConnected.Size = new System.Drawing.Size(117, 12);
             this.lblLastConnected.TabIndex = 1;
             this.lblLastConnected.Text = "Last connected: 2 days ago";
             // 
-            // lblConfigHash
-            // 
-            this.lblConfigHash.AutoSize = true;
-            this.lblConfigHash.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblConfigHash.Location = new System.Drawing.Point(9, 55);
-            this.lblConfigHash.Name = "lblConfigHash";
-            this.lblConfigHash.Size = new System.Drawing.Size(370, 12);
-            this.lblConfigHash.TabIndex = 0;
-            this.lblConfigHash.Text = "sha256sum: 1b542dc224800f6266334f96b13ba65ea6ecac1cd058d913aec8910f6ce3d09f";
-            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.webBox);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 149);
+            this.panel2.Location = new System.Drawing.Point(0, 131);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(306, 278);
+            this.panel2.Size = new System.Drawing.Size(306, 296);
             this.panel2.TabIndex = 5;
             // 
             // webBox
@@ -247,7 +253,7 @@ namespace ViperClient
             this.webBox.Name = "webBox";
             this.webBox.ScriptErrorsSuppressed = true;
             this.webBox.ScrollBarsEnabled = false;
-            this.webBox.Size = new System.Drawing.Size(306, 278);
+            this.webBox.Size = new System.Drawing.Size(306, 296);
             this.webBox.TabIndex = 0;
             // 
             // SysTrayApp
@@ -306,7 +312,28 @@ namespace ViperClient
         private void lbSelectProvider_SelectedIndexChanged(object sender, EventArgs e)
         {
             string conn = lbSelectProvider.SelectedItem.ToString();
-            lblConfigHash.Text = "sha256sum: " + ViperClient.Tools.GetConnectionFingerprint( conn );
+
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            string conn = lbSelectProvider.SelectedItem.ToString();
+            string cfg = ViperClient.Tools.GetConfigFromConnectionName(conn);
+            string log = ViperClient.Tools.GetLogFromConnectionName(conn);
+            Api api = new ViperClient.Api();
+            api.OpenTunnel(cfg, log);
+        }
+
+        private void lnkChecksum_MouseClick(object sender, MouseEventArgs e)
+        {
+            tipChecksum.ToolTipIcon = ToolTipIcon.Info;
+            tipChecksum.IsBalloon = true;
+            tipChecksum.ShowAlways = true;
+
+            string hash = ViperClient.Tools.GetConnectionFingerprint(lbSelectProvider.SelectedItem.ToString());
+            string caption = "SHA256: " + hash;
+
+            tipChecksum.SetToolTip(lnkChecksum, caption);
         }
 
     } // class

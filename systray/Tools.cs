@@ -39,12 +39,18 @@ namespace ViperClient
             return retval.ToArray();
         }
 
-        protected static string GetConfigFromConnectionName(string name)
+        public static string GetConfigFromConnectionName(string name)
         {
             DirectoryInfo di = new DirectoryInfo(Path.Combine(ViperClient.Tools.AppDataPath, name));
             return Path.Combine(di.FullName, name + ".ovpn");
         }
-        
+
+        public static string GetLogFromConnectionName(string name)
+        {
+            DirectoryInfo di = new DirectoryInfo(Path.Combine(ViperClient.Tools.AppDataPath, name));
+            return Path.Combine(di.FullName, "openvpn.log");
+        }
+
         public static bool AddConnection(string name, string cfgpath) 
         {
             DirectoryInfo di = Directory.CreateDirectory(Path.Combine(ViperClient.Tools.AppDataPath, name));
