@@ -22,7 +22,6 @@ namespace ViperClient
         private Panel panel2;
         private WebBrowser webBox;
         private ListBox lbSelectProvider;
-        private Button button2;
         private LinkLabel lnkChecksum;
         private ToolTip tipChecksum;
         private System.ComponentModel.IContainer components;
@@ -124,7 +123,6 @@ namespace ViperClient
             this.lbSelectProvider = new System.Windows.Forms.ListBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.panelSelectTunnel = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lnkChecksum = new System.Windows.Forms.LinkLabel();
@@ -145,13 +143,13 @@ namespace ViperClient
             this.lbSelectProvider.ItemHeight = 16;
             this.lbSelectProvider.Location = new System.Drawing.Point(3, 3);
             this.lbSelectProvider.Name = "lbSelectProvider";
-            this.lbSelectProvider.Size = new System.Drawing.Size(176, 68);
+            this.lbSelectProvider.Size = new System.Drawing.Size(176, 52);
             this.lbSelectProvider.TabIndex = 4;
             this.lbSelectProvider.SelectedIndexChanged += new System.EventHandler(this.lbSelectProvider_SelectedIndexChanged);
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(185, 3);
+            this.btnAdd.Location = new System.Drawing.Point(187, 7);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(109, 20);
             this.btnAdd.TabIndex = 3;
@@ -162,28 +160,18 @@ namespace ViperClient
             // panelSelectTunnel
             // 
             this.panelSelectTunnel.AutoSize = true;
-            this.panelSelectTunnel.Controls.Add(this.button2);
             this.panelSelectTunnel.Controls.Add(this.button1);
             this.panelSelectTunnel.Controls.Add(this.lbSelectProvider);
             this.panelSelectTunnel.Controls.Add(this.btnAdd);
             this.panelSelectTunnel.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelSelectTunnel.Location = new System.Drawing.Point(0, 0);
             this.panelSelectTunnel.Name = "panelSelectTunnel";
-            this.panelSelectTunnel.Size = new System.Drawing.Size(306, 74);
+            this.panelSelectTunnel.Size = new System.Drawing.Size(306, 58);
             this.panelSelectTunnel.TabIndex = 3;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(186, 27);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(109, 20);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "&Options";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(185, 51);
+            this.button1.Location = new System.Drawing.Point(187, 33);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(109, 20);
             this.button1.TabIndex = 5;
@@ -197,7 +185,7 @@ namespace ViperClient
             this.panel1.Controls.Add(this.btnConnect);
             this.panel1.Controls.Add(this.lblLastConnected);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 74);
+            this.panel1.Location = new System.Drawing.Point(0, 58);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(306, 57);
             this.panel1.TabIndex = 4;
@@ -237,9 +225,9 @@ namespace ViperClient
             // 
             this.panel2.Controls.Add(this.webBox);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 131);
+            this.panel2.Location = new System.Drawing.Point(0, 115);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(306, 296);
+            this.panel2.Size = new System.Drawing.Size(306, 312);
             this.panel2.TabIndex = 5;
             // 
             // webBox
@@ -253,7 +241,7 @@ namespace ViperClient
             this.webBox.Name = "webBox";
             this.webBox.ScriptErrorsSuppressed = true;
             this.webBox.ScrollBarsEnabled = false;
-            this.webBox.Size = new System.Drawing.Size(306, 296);
+            this.webBox.Size = new System.Drawing.Size(306, 312);
             this.webBox.TabIndex = 0;
             // 
             // SysTrayApp
