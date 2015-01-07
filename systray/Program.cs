@@ -227,7 +227,7 @@ namespace ViperClient
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 115);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(306, 312);
+            this.panel2.Size = new System.Drawing.Size(306, 251);
             this.panel2.TabIndex = 5;
             // 
             // webBox
@@ -241,12 +241,12 @@ namespace ViperClient
             this.webBox.Name = "webBox";
             this.webBox.ScriptErrorsSuppressed = true;
             this.webBox.ScrollBarsEnabled = false;
-            this.webBox.Size = new System.Drawing.Size(306, 312);
+            this.webBox.Size = new System.Drawing.Size(306, 251);
             this.webBox.TabIndex = 0;
             // 
             // SysTrayApp
             // 
-            this.ClientSize = new System.Drawing.Size(306, 427);
+            this.ClientSize = new System.Drawing.Size(306, 366);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelSelectTunnel);

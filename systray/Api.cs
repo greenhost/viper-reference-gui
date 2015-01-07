@@ -8,6 +8,40 @@ using Newtonsoft.Json;
 
 namespace ViperClient
 {
+    public class ApiException : Exception
+    {
+        public ApiException()
+        {
+        }
+
+        public ApiException(string message)
+            : base(message)
+        {
+        }
+
+        public ApiException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+    }
+
+    public class ServiceNotRunning : ApiException
+    {
+        public ServiceNotRunning()
+        {
+        }
+
+        public ServiceNotRunning(string message)
+            : base(message)
+        {
+        }
+
+        public ServiceNotRunning(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+    }
+
     class Api
     {
         private readonly Uri baseRequestUri = new Uri("http://localhost:8088");
@@ -28,18 +62,13 @@ namespace ViperClient
             req.ContentType = "text/json";
             req.Method = method;
 
-            try
+            // if we have anything to submit in the body of the request
+            if (string.Empty != body)
             {
-                // if we have anything to submit in the body of the request
-                if (string.Empty != body)
+                using (var sw = new StreamWriter(req.GetRequestStream()))
                 {
-                    using (var sw = new StreamWriter(req.GetRequestStream()))
-                    {
-                        sw.Write((string)body);
-                    }
+                    sw.Write((string)body);
                 }
-            } catch (WebException ex) {
-                return null;
             }
 
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
@@ -59,16 +88,24 @@ namespace ViperClient
                 {"log", logfile},
             };
 
-            string body = JsonConvert.SerializeObject(data, Formatting.Indented);
-            HttpWebResponse resp = this.makeRequest("/tunnel/open", "POST", body);
+            try
+            {
+                // create request
+                string body = JsonConvert.SerializeObject(data, Formatting.Indented);
+                HttpWebResponse resp = this.makeRequest("/tunnel/open", "POST", body);
 
-            if (HttpStatusCode.OK == resp.StatusCode)
-            {
-                return true;
+                if (HttpStatusCode.OK == resp.StatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (WebException ex)
             {
-                return false;
+                throw new ServiceNotRunning("Viper service doesn't seem to respond to requests", ex);
             }
         }
 
