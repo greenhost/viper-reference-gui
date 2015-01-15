@@ -2,16 +2,40 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Security.Policy;
+using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace ViperClient
 {
 
     public class SysTrayApp : Form
     {
+        [DllImportAttribute("user32.dll")]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImportAttribute("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImportAttribute("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
         [STAThread]
         public static void Main()
         {
-            Application.Run(new SysTrayApp());
+            bool onlyInstance = false;
+            Mutex mutex = new Mutex(true, "Viper", out onlyInstance);
+            // if we are the only instance of Viper running
+            if(onlyInstance) {
+                Application.Run(new SysTrayApp());
+                GC.KeepAlive( mutex );
+            }
+        }
+
+        public static void ShowToFront(string wndName)
+        {
+            IntPtr inst = FindWindow(null, wndName);
+            ShowWindow( inst, 1 );
+            SetForegroundWindow( inst );
         }
 
         private NotifyIcon icon;
@@ -45,7 +69,7 @@ namespace ViperClient
 
             menu = new ContextMenu();
 
-            menu.MenuItems.Add("Exit", new EventHandler(this.OnExit) );
+            menu.MenuItems.Add("&Quit viper", new EventHandler(this.OnExit) );
             //menu.MenuItems.Add("Connect to VPN...", new EventHandler(this.OnConnect));
             //menu.MenuItems.Add("Disconnect...", new EventHandler(this.OnDisconnect));
             //menu.MenuItems.Add("Configure...", new EventHandler(this.OnConfigure));
@@ -200,6 +224,7 @@ namespace ViperClient
             this.lnkChecksum.TabIndex = 3;
             this.lnkChecksum.TabStop = true;
             this.lnkChecksum.Text = "checksum";
+            this.lnkChecksum.Visible = false;
             this.lnkChecksum.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lnkChecksum_MouseClick);
             // 
             // btnConnect
@@ -233,14 +258,12 @@ namespace ViperClient
             // 
             // webBox
             // 
-            this.webBox.AllowNavigation = false;
             this.webBox.AllowWebBrowserDrop = false;
             this.webBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBox.IsWebBrowserContextMenuEnabled = false;
             this.webBox.Location = new System.Drawing.Point(0, 0);
             this.webBox.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBox.Name = "webBox";
-            this.webBox.ScriptErrorsSuppressed = true;
+            this.webBox.ScriptErrorsSuppressed = false;
             this.webBox.ScrollBarsEnabled = false;
             this.webBox.Size = new System.Drawing.Size(306, 251);
             this.webBox.TabIndex = 0;
@@ -255,7 +278,7 @@ namespace ViperClient
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SysTrayApp";
-            this.Text = "PolyTunnel";
+            this.Text = "Viper GUI";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SysTrayApp_FormClosing);
             this.panelSelectTunnel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -300,8 +323,12 @@ namespace ViperClient
 
         private void lbSelectProvider_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (null != lbSelectProvider.SelectedItem)
+            {
+                // something is selected so show a checksum of it
+                lnkChecksum.Visible = true;
+            }
             string conn = lbSelectProvider.SelectedItem.ToString();
-
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
@@ -309,8 +336,14 @@ namespace ViperClient
             string conn = lbSelectProvider.SelectedItem.ToString();
             string cfg = ViperClient.Tools.GetConfigFromConnectionName(conn);
             string log = ViperClient.Tools.GetLogFromConnectionName(conn);
-            Api api = new ViperClient.Api();
-            api.OpenTunnel(cfg, log);
+
+            try
+            {
+                Api api = new ViperClient.Api();
+                bool res = api.OpenTunnel(cfg, log);
+            } catch(ServiceNotRunning ex) {
+                MessageBox.Show("Seems like the Viper monitor service isn't running, will not connect", "Failed to connect", MessageBoxButtons.OK);
+            }
         }
 
         private void lnkChecksum_MouseClick(object sender, MouseEventArgs e)

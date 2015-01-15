@@ -59,7 +59,7 @@ namespace ViperClient
         {
             Uri dest = new Uri(baseRequestUri, uri);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create( dest );
-            req.ContentType = "text/json";
+            req.ContentType = "application/json";
             req.Method = method;
 
             // if we have anything to submit in the body of the request
@@ -91,7 +91,7 @@ namespace ViperClient
             try
             {
                 // create request
-                string body = JsonConvert.SerializeObject(data, Formatting.Indented);
+                string body = JsonConvert.SerializeObject(data, Formatting.None);
                 HttpWebResponse resp = this.makeRequest("/tunnel/open", "POST", body);
 
                 if (HttpStatusCode.OK == resp.StatusCode)
@@ -105,7 +105,15 @@ namespace ViperClient
             }
             catch (WebException ex)
             {
-                throw new ServiceNotRunning("Viper service doesn't seem to respond to requests", ex);
+                HttpWebResponse error = ex.Response as HttpWebResponse;
+                if (error.StatusCode == HttpStatusCode.ServiceUnavailable)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw new ServiceNotRunning("Viper service doesn't seem to respond to requests", ex);
+                }
             }
         }
 
