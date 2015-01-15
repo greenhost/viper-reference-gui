@@ -67,6 +67,7 @@ namespace ViperClient
 
         protected void RefreshListOfConnections() {
             lbSelectProvider.Items.Clear();
+            ViperClient.Tools.MakeSureAppDataPathExists();
             string[] conns = ViperClient.Tools.GetConnectionNames();
             foreach(string c in conns) {
                 lbSelectProvider.Items.Add(c);
