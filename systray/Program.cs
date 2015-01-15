@@ -49,6 +49,7 @@ namespace ViperClient
         private LinkLabel lnkChecksum;
         private ToolTip tipChecksum;
         private System.ComponentModel.IContainer components;
+        private System.Windows.Forms.Timer formTimer;
         private ContextMenu menu;
 
         public void OnConnect(object sender, EventArgs e)
@@ -76,7 +77,7 @@ namespace ViperClient
 
             icon = new NotifyIcon();
             icon.Text = "Not connected";
-            icon.Icon = ViperClient.Properties.Resources.offline;
+            icon.Icon = ViperClient.Properties.Resources.mask; //offline;
             icon.Click += new System.EventHandler(this.OnSystrayClick);
 
             //wndSelect = new SelectConnection();
@@ -145,6 +146,7 @@ namespace ViperClient
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SysTrayApp));
             this.lbSelectProvider = new System.Windows.Forms.ListBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.panelSelectTunnel = new System.Windows.Forms.Panel();
@@ -156,6 +158,7 @@ namespace ViperClient
             this.panel2 = new System.Windows.Forms.Panel();
             this.webBox = new System.Windows.Forms.WebBrowser();
             this.tipChecksum = new System.Windows.Forms.ToolTip(this.components);
+            this.formTimer = new System.Windows.Forms.Timer(this.components);
             this.panelSelectTunnel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -263,10 +266,15 @@ namespace ViperClient
             this.webBox.Location = new System.Drawing.Point(0, 0);
             this.webBox.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBox.Name = "webBox";
-            this.webBox.ScriptErrorsSuppressed = false;
             this.webBox.ScrollBarsEnabled = false;
             this.webBox.Size = new System.Drawing.Size(306, 251);
             this.webBox.TabIndex = 0;
+            // 
+            // formTimer
+            // 
+            this.formTimer.Enabled = true;
+            this.formTimer.Interval = 5000;
+            this.formTimer.Tick += new System.EventHandler(this.formTimer_Tick);
             // 
             // SysTrayApp
             // 
@@ -275,6 +283,7 @@ namespace ViperClient
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelSelectTunnel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SysTrayApp";
@@ -356,6 +365,11 @@ namespace ViperClient
             string caption = "SHA256: " + hash;
 
             tipChecksum.SetToolTip(lnkChecksum, caption);
+        }
+
+        private void formTimer_Tick(object sender, EventArgs e)
+        {
+            webBox.Refresh();
         }
 
     } // class

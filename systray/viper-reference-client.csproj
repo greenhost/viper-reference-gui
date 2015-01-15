@@ -132,6 +132,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\mask.ico" />
     <Content Include="Resources\ok-green.png" />
     <Content Include="Resources\ovpn-green.png" />
     <Content Include="Resources\ovpn-grey.png" />
