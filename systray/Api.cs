@@ -106,7 +106,7 @@ namespace ViperClient
             catch (WebException ex)
             {
                 HttpWebResponse error = ex.Response as HttpWebResponse;
-                if (error.StatusCode == HttpStatusCode.ServiceUnavailable)
+                if ( (null != error) && (error.StatusCode == HttpStatusCode.ServiceUnavailable) )
                 {
                     return false;
                 }
