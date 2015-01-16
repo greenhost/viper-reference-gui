@@ -118,6 +118,10 @@ namespace ViperClient
 
         public void OnExit(object sender, EventArgs e)
         {
+            // close tunnel on exit
+            Api api = new ViperClient.Api();
+            bool res = api.CloseTunnel();
+
             // close all forms
             this.Close();
             System.Environment.Exit(0);
