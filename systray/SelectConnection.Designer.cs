@@ -55,7 +55,7 @@
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(13, 9);
+            this.label1.Location = new System.Drawing.Point(10, 179);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(281, 36);
             this.label1.TabIndex = 1;
@@ -66,7 +66,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(90, 58);
+            this.pictureBox1.Location = new System.Drawing.Point(87, 13);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(133, 150);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -110,11 +110,16 @@
             this.ClientSize = new System.Drawing.Size(306, 269);
             this.Controls.Add(this.panelAddTunnelConfig);
             this.Controls.Add(this.panel1);
+            this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::ViperClient.Properties.Settings.Default, "AddFormPosition", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Location = global::ViperClient.Properties.Settings.Default.AddFormPosition;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SelectConnection";
             this.Text = "Add tunnel configuration";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectConnection_FormClosing);
+            this.Load += new System.EventHandler(this.SelectConnection_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.SelectConnection_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.SelectConnection_DragEnter);
             this.DragLeave += new System.EventHandler(this.SelectConnection_DragLeave);

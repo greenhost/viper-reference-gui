@@ -94,5 +94,16 @@ namespace ViperClient
 
             this.Hide();
         }
+
+        private void SelectConnection_Load(object sender, EventArgs e)
+        {
+            this.Location = Properties.Settings.Default.AddFormPosition;
+        }
+
+        private void SelectConnection_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.AddFormPosition = this.Location;
+            Properties.Settings.Default.Save();
+        }
     }
 }

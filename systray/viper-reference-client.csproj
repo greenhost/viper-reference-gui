@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="OVPNLog.cs" />
     <Compile Include="SelectConnection.cs">
       <SubType>Form</SubType>
     </Compile>

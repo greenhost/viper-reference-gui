@@ -22,5 +22,65 @@ namespace ViperClient.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MainFormPosition {
+            get {
+                return ((global::System.Drawing.Point)(this["MainFormPosition"]));
+            }
+            set {
+                this["MainFormPosition"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point AddFormPosition {
+            get {
+                return ((global::System.Drawing.Point)(this["AddFormPosition"]));
+            }
+            set {
+                this["AddFormPosition"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RememberLastExitAction {
+            get {
+                return ((bool)(this["RememberLastExitAction"]));
+            }
+            set {
+                this["RememberLastExitAction"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastExistAction {
+            get {
+                return ((string)(this["LastExistAction"]));
+            }
+            set {
+                this["LastExistAction"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("strict")]
+        public string DefaultPolicy {
+            get {
+                return ((string)(this["DefaultPolicy"]));
+            }
+            set {
+                this["DefaultPolicy"] = value;
+            }
+        }
     }
 }

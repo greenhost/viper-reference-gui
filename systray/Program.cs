@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace ViperClient
 {
 
-    public class SysTrayApp : Form
+    public class ViperGUIMain : Form
     {
         [DllImportAttribute("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -25,9 +25,14 @@ namespace ViperClient
             bool onlyInstance = false;
             Mutex mutex = new Mutex(true, "Viper", out onlyInstance);
             // if we are the only instance of Viper running
-            if(onlyInstance) {
-                Application.Run(new SysTrayApp());
-                GC.KeepAlive( mutex );
+            if (onlyInstance)
+            {
+                Application.Run(new ViperGUIMain());
+                GC.KeepAlive(mutex);
+            }
+            else
+            {
+                ShowToFront("ViperGUIMain");
             }
         }
 
@@ -64,7 +69,7 @@ namespace ViperClient
         {
         }
 
-        public SysTrayApp()
+        public ViperGUIMain()
         {
             InitializeComponent();
 
@@ -103,6 +108,7 @@ namespace ViperClient
         private void OnSystrayClick(object Sender, EventArgs e)
         {
             this.Show();
+            ShowToFront("ViperGUIMain");
         }
 
         protected override void OnLoad(EventArgs e)
@@ -119,8 +125,8 @@ namespace ViperClient
         public void OnExit(object sender, EventArgs e)
         {
             // close tunnel on exit
-            Api api = new ViperClient.Api();
-            bool res = api.CloseTunnel();
+            //Api api = new ViperClient.Api();
+            //bool res = api.CloseTunnel();
 
             // close all forms
             this.Close();
@@ -150,7 +156,7 @@ namespace ViperClient
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SysTrayApp));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViperGUIMain));
             this.lbSelectProvider = new System.Windows.Forms.ListBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.panelSelectTunnel = new System.Windows.Forms.Panel();
@@ -280,19 +286,22 @@ namespace ViperClient
             this.formTimer.Interval = 5000;
             this.formTimer.Tick += new System.EventHandler(this.formTimer_Tick);
             // 
-            // SysTrayApp
+            // ViperGUIMain
             // 
             this.ClientSize = new System.Drawing.Size(306, 366);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelSelectTunnel);
+            this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::ViperClient.Properties.Settings.Default, "MainFormPosition", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Location = global::ViperClient.Properties.Settings.Default.MainFormPosition;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "SysTrayApp";
+            this.Name = "ViperGUIMain";
             this.Text = "Viper GUI";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SysTrayApp_FormClosing);
+            this.Load += new System.EventHandler(this.ViperGUIMain_Load);
             this.panelSelectTunnel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -319,6 +328,10 @@ namespace ViperClient
 
         private void SysTrayApp_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // save window position
+            Properties.Settings.Default.MainFormPosition = this.Location;
+            Properties.Settings.Default.Save();
+
             // minimize on close
             e.Cancel = true;
             Hide();
@@ -342,6 +355,9 @@ namespace ViperClient
                 lnkChecksum.Visible = true;
             }
             string conn = lbSelectProvider.SelectedItem.ToString();
+
+            OVPNLog log = new OVPNLog( ViperClient.Tools.GetLogFromConnectionName(lbSelectProvider.SelectedItem.ToString() );
+            lblLastConnected.Text = Tools.GetFriendlyDate( log.LastConnection() );
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
@@ -374,6 +390,11 @@ namespace ViperClient
         private void formTimer_Tick(object sender, EventArgs e)
         {
             webBox.Refresh();
+        }
+
+        private void ViperGUIMain_Load(object sender, EventArgs e)
+        {
+            this.Location = Properties.Settings.Default.MainFormPosition;
         }
 
     } // class
