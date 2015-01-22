@@ -357,7 +357,7 @@ namespace ViperClient
             string conn = lbSelectProvider.SelectedItem.ToString();
 
             OVPNLog log = new OVPNLog( ViperClient.Tools.GetLogFromConnectionName(lbSelectProvider.SelectedItem.ToString() ));
-            lblLastConnected.Text = "Last connected: " + Tools.GetFriendlyDate( log.LastConnection() );
+            lblLastConnected.Text = "Last connected: " + Tools.ToFriendlyDate( log.LastConnection() );
         }
 
         private void btnConnect_Click(object sender, EventArgs e)

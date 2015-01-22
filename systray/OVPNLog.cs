@@ -25,7 +25,6 @@ namespace ViperClient
         /// <returns>DateTime.MinValue when last connection is unknown. Correct DateTime of last successful connection.</returns>
         public DateTime LastConnection() {
             DateTime retval = DateTime.MinValue;
-            CultureInfo provider = CultureInfo.InvariantCulture;
 
             using (StreamReader sr = File.OpenText(pathLogfile))
             {
@@ -36,8 +35,9 @@ namespace ViperClient
                     if (s.Contains("Initialization Sequence Completed"))
                     {
                         string dt = s.Replace("Initialization Sequence Completed", "");
-                        dt = dt.Trim();
-                        retval = DateTime.ParseExact(dt, "ddd MMM dd hh:mm:ss yyyy", provider);  // Fri Jan 16 01:19:49 2015
+                        dt = dt.Trim(); //.ToLower();
+                        retval = DateTime.ParseExact(dt, "ddd MMM dd HH:mm:ss yyyy", null);  // Fri Jan 16 01:19:49 2015
+                        //retval = DateTime.ParseExact(dt, "HH:mm:ss yyyy", CultureInfo.InvariantCulture);  // Fri Jan 16 01:19:49 2015
                     }
                 }
             }

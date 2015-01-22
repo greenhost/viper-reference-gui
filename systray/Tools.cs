@@ -83,89 +83,51 @@ namespace ViperClient
             return ViperClient.Tools.GetFileChecksum(cfgFile);
         }
 
-        public static string GetFriendlyDate(DateTime d)
+        /// <summary>
+        /// Converts the specified DateTime to its relative date.
+        /// </summary>
+        /// <param name=”dateTime”>The DateTime to convert.</param>
+        /// <returns>A string value based on the relative date
+        /// of the datetime as compared to the current date.</returns>
+        public static string ToFriendlyDate(DateTime dt)
         {
-	        // 1.
-	        // Get time span elapsed since the date.
-	        TimeSpan s = DateTime.Now.Subtract(d);
+            var timeSpan = new TimeSpan(DateTime.UtcNow.Ticks - dt.Ticks);
+ 
+            // span is less than or equal to 60 seconds, measure in seconds.
+            if (timeSpan <= TimeSpan.FromSeconds(60))
+            {
+                return timeSpan.Seconds + " seconds ago";
+            }
 
-	        // 2.
-	        // Get total number of days elapsed.
-	        int dayDiff = (int)s.TotalDays;
+            // span is less than or equal to 60 minutes, measure in minutes.
+            if (timeSpan <= TimeSpan.FromMinutes(60))
+            {
+                return timeSpan.Minutes > 1
+                    ? "about " + timeSpan.Minutes + " minutes ago" : "about a minute ago";
+            }
 
-	        // 3.
-	        // Get total number of seconds elapsed.
-	        int secDiff = (int)s.TotalSeconds;
+            // span is less than or equal to 24 hours, measure in hours.
+            if (timeSpan <= TimeSpan.FromHours(24))
+            {
+                return timeSpan.Hours > 1
+                    ? "about " + timeSpan.Hours + " hours ago" : "about an hour ago";
+            }
 
-	        // 4.
-	        // Don't allow out of range values.
-	        if (dayDiff < 0 || dayDiff >= 31)
-	        {
-	            return null;
-	        }
-
-	        // 5.
-	        // Handle same-day times.
-	        if (dayDiff == 0)
-	        {
-	            // A.
-	            // Less than one minute ago.
-	            if (secDiff < 60)
-	            {
-		            return "just now";
-	            }
-
-	            // B.
-	            // Less than 2 minutes ago.
-	            if (secDiff < 120)
-	            {
-		            return "1 minute ago";
-	            }
-
-	            // C.
-	            // Less than one hour ago.
-	            if (secDiff < 3600)
-	            {
-		            return string.Format("{0} minutes ago",
-		                Math.Floor((double)secDiff / 60));
-	            }
-
-	            // D.
-	            // Less than 2 hours ago.
-	            if (secDiff < 7200)
-	            {
-		            return "1 hour ago";
-	            }
-
-	            // E.
-	            // Less than one day ago.
-	            if (secDiff < 86400)
-	            {
-		            return string.Format("{0} hours ago",
-		                Math.Floor((double)secDiff / 3600));
-	            }
-	        }
-
-	        // 6.
-	        // Handle previous days.
-	        if (dayDiff == 1)
-	        {
-	            return "yesterday";
-	        }
-
-	        if (dayDiff < 7)
-	        {
-	            return string.Format("{0} days ago",
-		        dayDiff);
-	        }
-
-	        if (dayDiff < 31)
-	        {
-	            return string.Format("{0} weeks ago",
-		        Math.Ceiling((double)dayDiff / 7));
-	        }
-
-	        return null;
+            // span is less than or equal to 30 days (1 month), measure in days.
+            if (timeSpan <= TimeSpan.FromDays(30))
+            {
+                return timeSpan.Days > 1
+                    ? "about " + timeSpan.Days + " days ago" : "about a day ago";
+            }
+            // span is less than or equal to 365 days (1 year), measure in months.
+            if (timeSpan <= TimeSpan.FromDays(365))
+            {
+                return timeSpan.Days > 30
+                    ? "about " + timeSpan.Days / 30 + " months ago" : "about a month ago";
+            }
+ 
+            // span is greater than 365 days (1 year), measure in years.
+            return (timeSpan.Days > 365) ? "about " + timeSpan.Days / 365 + " years ago" : "about a year ago";
         }
 
 
