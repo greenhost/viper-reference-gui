@@ -112,33 +112,37 @@ namespace ViperClient
 	            // Less than one minute ago.
 	            if (secDiff < 60)
 	            {
-		        return "just now";
+		            return "just now";
 	            }
+
 	            // B.
 	            // Less than 2 minutes ago.
 	            if (secDiff < 120)
 	            {
-		        return "1 minute ago";
+		            return "1 minute ago";
 	            }
+
 	            // C.
 	            // Less than one hour ago.
 	            if (secDiff < 3600)
 	            {
-		        return string.Format("{0} minutes ago",
-		            Math.Floor((double)secDiff / 60));
+		            return string.Format("{0} minutes ago",
+		                Math.Floor((double)secDiff / 60));
 	            }
+
 	            // D.
 	            // Less than 2 hours ago.
 	            if (secDiff < 7200)
 	            {
-		        return "1 hour ago";
+		            return "1 hour ago";
 	            }
+
 	            // E.
 	            // Less than one day ago.
 	            if (secDiff < 86400)
 	            {
-		        return string.Format("{0} hours ago",
-		            Math.Floor((double)secDiff / 3600));
+		            return string.Format("{0} hours ago",
+		                Math.Floor((double)secDiff / 3600));
 	            }
 	        }
 
@@ -148,18 +152,20 @@ namespace ViperClient
 	        {
 	            return "yesterday";
 	        }
+
 	        if (dayDiff < 7)
 	        {
 	            return string.Format("{0} days ago",
 		        dayDiff);
 	        }
+
 	        if (dayDiff < 31)
 	        {
 	            return string.Format("{0} weeks ago",
 		        Math.Ceiling((double)dayDiff / 7));
 	        }
+
 	        return null;
-            }
         }
 
 

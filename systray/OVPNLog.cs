@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace ViperClient
 {
@@ -24,6 +25,8 @@ namespace ViperClient
         /// <returns>DateTime.MinValue when last connection is unknown. Correct DateTime of last successful connection.</returns>
         public DateTime LastConnection() {
             DateTime retval = DateTime.MinValue;
+            CultureInfo provider = CultureInfo.InvariantCulture;
+
             using (StreamReader sr = File.OpenText(pathLogfile))
             {
                 string s = "";
@@ -32,8 +35,9 @@ namespace ViperClient
                 {
                     if (s.Contains("Initialization Sequence Completed"))
                     {
-                        s.Replace("Initialization Sequence Completed", "");
-                        retval = DateTime.Parse(s);
+                        string dt = s.Replace("Initialization Sequence Completed", "");
+                        dt = dt.Trim();
+                        retval = DateTime.ParseExact(dt, "ddd MMM dd hh:mm:ss yyyy", provider);  // Fri Jan 16 01:19:49 2015
                     }
                 }
             }
