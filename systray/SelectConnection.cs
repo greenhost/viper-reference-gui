@@ -31,6 +31,8 @@ namespace ViperClient
             this.pictureBox1.Image = (Image)Properties.Resources.ok_green;
             this.pictureBox1.Refresh();
 
+            label1.Text = "Give this connection a name, any name you like and type it in the box bellow.";
+
             // name the connection
             string name = Path.GetFileNameWithoutExtension(this.PathToConfigFile);
             tbConnectionName.Text = name;
