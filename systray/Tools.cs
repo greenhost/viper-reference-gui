@@ -12,7 +12,7 @@ namespace ViperClient
         public static string AppDataPath {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Polytunnel");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Viper");
             }
         }
 
