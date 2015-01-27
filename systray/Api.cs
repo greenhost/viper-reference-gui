@@ -25,6 +25,14 @@ namespace ViperClient
         }
     }
 
+    public class TunnelStatus
+    {
+        [JsonProperty("state")]
+        public string state;
+        [JsonProperty("policies")]
+        public List<string> policies;
+    }
+
     public class ServiceNotRunning : ApiException
     {
         public ServiceNotRunning()
@@ -63,7 +71,7 @@ namespace ViperClient
             req.Method = method;
 
             // if we have anything to submit in the body of the request
-            if (string.Empty != body)
+            if ( (string.Empty != body) && (null != body) )
             {
                 using (var sw = new StreamWriter(req.GetRequestStream()))
                 {
@@ -116,6 +124,85 @@ namespace ViperClient
                 }
             }
         }
+
+        private bool PolicyRequest(string uri, string policyName)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>
+            {
+                {"name", policyName},
+            };
+
+            try
+            {
+                // create request
+                string body = JsonConvert.SerializeObject(data, Formatting.None);
+                HttpWebResponse resp = this.makeRequest(uri, "POST", body);
+
+                if (HttpStatusCode.OK == resp.StatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse error = ex.Response as HttpWebResponse;
+                if ((null != error) && (error.StatusCode == HttpStatusCode.ServiceUnavailable))
+                {
+                    return false;
+                }
+                else
+                {
+                    throw new ServiceNotRunning("Viper service doesn't seem to respond to requests", ex);
+                }
+            }
+        }
+
+        public bool EnablePolicy(string pname)
+        {
+            return PolicyRequest("/policy/enable", pname);
+        }
+
+        public bool DisablePolicy(string pname)
+        {
+            return PolicyRequest("/policy/disable", pname);
+        }
+
+        public TunnelStatus TunnelStatus()
+        {
+            try
+            {
+                HttpWebResponse resp = this.makeRequest("/tunnel/status", "GET", null);
+                if (HttpStatusCode.OK == resp.StatusCode)
+                {
+                    using (var reader = new StreamReader(resp.GetResponseStream()))
+                    {
+                        var txt = reader.ReadToEnd();
+                        TunnelStatus obj = (TunnelStatus)JsonConvert.DeserializeObject<TunnelStatus>(txt);
+                        return obj;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse error = ex.Response as HttpWebResponse;
+                if ((null != error) && (error.StatusCode == HttpStatusCode.ServiceUnavailable))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new ServiceNotRunning("Viper service doesn't seem to respond to requests", ex);
+                }
+            }
+        } // TunnelStatus()
 
         public bool CloseTunnel()
         {

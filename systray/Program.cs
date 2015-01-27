@@ -19,6 +19,13 @@ namespace ViperClient
         [DllImportAttribute("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        private bool _isConnected;
+        public bool IsConnected { 
+            get {
+                return _isConnected;
+            }
+        }
+
         [STAThread]
         public static void Main()
         {
@@ -357,7 +364,15 @@ namespace ViperClient
             string conn = lbSelectProvider.SelectedItem.ToString();
 
             OVPNLog log = new OVPNLog( ViperClient.Tools.GetLogFromConnectionName(lbSelectProvider.SelectedItem.ToString() ));
-            lblLastConnected.Text = "Last connected: " + Tools.ToFriendlyDate( log.LastConnection() );
+            DateTime last = log.LastConnection();
+            if (last == DateTime.MinValue)
+            {
+                lblLastConnected.Text = "Never connected";
+            }
+            else
+            {
+                lblLastConnected.Text = "Last connected: " + Tools.ToFriendlyDate( last );
+            }
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
@@ -369,6 +384,7 @@ namespace ViperClient
             try
             {
                 Api api = new ViperClient.Api();
+                api.EnablePolicy("strict");
                 bool res = api.OpenTunnel(cfg, log);
             } catch(ServiceNotRunning ex) {
                 MessageBox.Show("Seems like the Viper monitor service isn't running, will not connect", "Failed to connect", MessageBoxButtons.OK);
@@ -389,7 +405,27 @@ namespace ViperClient
 
         private void formTimer_Tick(object sender, EventArgs e)
         {
-            webBox.Refresh();
+            // check the tunnel status
+            try
+            {
+                Api api = new ViperClient.Api();
+                TunnelStatus stat = api.TunnelStatus();
+                if (stat.state == "CONNECTED")
+                {
+                    _isConnected = true;
+                }
+                else
+                {
+                    _isConnected = false;
+                }
+            }
+            catch (ServiceNotRunning ex)
+            {
+                //MessageBox.Show("Seems like the Viper monitor service isn't running, will not connect", "Failed to connect", MessageBoxButtons.OK);
+            }
+
+            // refresh the web view and prevent caching
+            webBox.Refresh(WebBrowserRefreshOption.Completely);
         }
 
         private void ViperGUIMain_Load(object sender, EventArgs e)
