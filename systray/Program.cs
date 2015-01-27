@@ -384,8 +384,16 @@ namespace ViperClient
             try
             {
                 Api api = new ViperClient.Api();
-                api.EnablePolicy("strict");
-                bool res = api.OpenTunnel(cfg, log);
+                if (this.IsConnected)
+                {
+                    api.CloseTunnel();
+                    api.DisablePolicy("strict");
+                }
+                else
+                {
+                    api.EnablePolicy("strict");
+                    bool res = api.OpenTunnel(cfg, log);
+                }
             } catch(ServiceNotRunning ex) {
                 MessageBox.Show("Seems like the Viper monitor service isn't running, will not connect", "Failed to connect", MessageBoxButtons.OK);
             }
@@ -426,6 +434,14 @@ namespace ViperClient
 
             // refresh the web view and prevent caching
             webBox.Refresh(WebBrowserRefreshOption.Completely);
+            if (this.IsConnected)
+            {
+                btnConnect.Text = "Disconnect";
+            }
+            else
+            {
+                btnConnect.Text = "Connect";
+            }
         }
 
         private void ViperGUIMain_Load(object sender, EventArgs e)
