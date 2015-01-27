@@ -23,26 +23,34 @@ namespace ViperClient
         /// Tries to determine the last time a given OpenVPN connection was made succesfully based on the log entry.
         /// </summary>
         /// <returns>DateTime.MinValue when last connection is unknown. Correct DateTime of last successful connection.</returns>
-        public DateTime LastConnection() {
+        public DateTime LastConnection()
+        {
             DateTime retval = DateTime.MinValue;
 
-            using (StreamReader sr = File.OpenText(pathLogfile))
+            if (File.Exists(pathLogfile))
             {
-                string s = "";
-                // search for text "Initialization Sequence Completed"
-                while ((s = sr.ReadLine()) != null)
+                using (StreamReader sr = File.OpenText(pathLogfile))
                 {
-                    if (s.Contains("Initialization Sequence Completed"))
+                    string s = "";
+                    // search for text "Initialization Sequence Completed"
+                    while ((s = sr.ReadLine()) != null)
                     {
-                        string dt = s.Replace("Initialization Sequence Completed", "");
-                        dt = dt.Trim(); //.ToLower();
-                        retval = DateTime.ParseExact(dt, "ddd MMM dd HH:mm:ss yyyy", null);  // Fri Jan 16 01:19:49 2015
-                        //retval = DateTime.ParseExact(dt, "HH:mm:ss yyyy", CultureInfo.InvariantCulture);  // Fri Jan 16 01:19:49 2015
+                        if (s.Contains("Initialization Sequence Completed"))
+                        {
+                            string dt = s.Replace("Initialization Sequence Completed", "");
+                            dt = dt.Trim(); //.ToLower();
+                            retval = DateTime.ParseExact(dt, "ddd MMM dd HH:mm:ss yyyy", null);  // Fri Jan 16 01:19:49 2015
+                            //retval = DateTime.ParseExact(dt, "HH:mm:ss yyyy", CultureInfo.InvariantCulture);  // Fri Jan 16 01:19:49 2015
+                        }
                     }
                 }
+                return retval;
             }
-            return retval;
-        }
+            else
+            {
+                return DateTime.MinValue;
+            }
+    }
 
     } // class
 } // ns
